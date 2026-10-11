@@ -35,4 +35,6 @@ wasm-bindgen-futures = { workspace = true }
 web-sys = { workspace = true, features = ["Window", "Storage", "Headers", "Request", "RequestInit", "Response"] }
 
 [dev-dependencies]
-egui_kittest = { workspace = true, features = ["eframe"] }
+# wgpu + snapshot only for the ignored screenshot test (tests/screenshot.rs); the renderer starts
+# lazily, so the other tests need no GPU.
+egui_kittest = { workspace = true, features = ["eframe", "wgpu", "snapshot"] }

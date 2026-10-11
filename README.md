@@ -8,6 +8,8 @@ prompts for the tasks you repeat often, such as fixing grammar, rewriting a para
 summarizing or adjusting tone, each backed by whichever model fits it best (including free ones),
 all through your own [OpenRouter](https://openrouter.ai/) API key.
 
+<p align="center"><img src="docs/screenshot.png" width="560" alt="AI Assistant: the Main tab, a prompt correcting an e-mail's grammar"></p>
+
 A Rust port of the Python/PySide6 app AiAssistantLinux, built with egui. It runs on Windows, macOS,
 Linux and FreeBSD, and in the browser.
 
@@ -42,6 +44,7 @@ cargo run -p aiassist                          # desktop app
 cargo xtask ci                                 # fmt, clippy, tests, wasm32 check, cargo-deny
 cd apps/aiassist-web && trunk serve            # web version on http://127.0.0.1:8080
 cargo test -p aiassist-ui --test live -- --ignored --nocapture   # live OpenRouter check (free model)
+cargo test -p aiassist-ui --test screenshot -- --ignored         # re-render docs/screenshot.png (needs a GPU)
 ```
 
 Linux needs the windowing headers first, e.g. on Debian/Ubuntu:
