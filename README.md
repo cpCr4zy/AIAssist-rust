@@ -24,6 +24,18 @@ Linux and FreeBSD, and in the browser.
    answer appears under **Result**; **Copy Result** puts it on the clipboard.
 5. The **Log** tab shows what happened.
 
+## Browser version
+
+`aiassist-web-<version>.zip` from a release is a static website. Browsers do not run WebAssembly
+from a page opened as a local file, so serve the unpacked folder over HTTP:
+
+```sh
+python3 -m http.server 8000 --bind 127.0.0.1
+```
+
+and open <http://127.0.0.1:8000>, or upload it to any static host. `README-web.md` in the archive
+has the details.
+
 ## Where settings are kept
 
 | Platform | Settings (`settings.json`) | API key |

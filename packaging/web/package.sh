@@ -4,7 +4,8 @@
 # Usage: packaging/web/package.sh [--skip-build]
 # Needs: trunk (a prebuilt binary from https://github.com/trunk-rs/trunk/releases), zip and the
 # wasm32-unknown-unknown target. The zip holds
-# a self-contained static site that works from any URL path and inside an <iframe>.
+# a self-contained static site that works from any URL path and inside an <iframe>, with
+# README-web.md on how to serve it (a page opened as file:// stays blank).
 set -euo pipefail
 # shellcheck source=packaging/env.sh
 . "$(dirname "${BASH_SOURCE[0]}")/../env.sh"
@@ -23,13 +24,15 @@ if grep -Eq '(src|href)="/[^/]' "$SITE/index.html"; then
   echo "error: $SITE/index.html has root-absolute URLs; it would break when served from a sub-path" >&2
   exit 1
 fi
+# The no-script hint for pages opened as file:// (apps/aiassist-web/index.html) must survive trunk.
+grep -q 'id="hint"' "$SITE/index.html" || { echo "error: $SITE/index.html lost the #hint block" >&2; exit 1; }
 
 NAME="aiassist-web-$VERSION"
 WORK="$CARGO_TARGET_DIR/web-package"
 fresh_dir "$WORK"
 mkdir -p "$WORK/$NAME"
 cp -R "$SITE/." "$WORK/$NAME/"
-cp "$HERE/_headers" "$WORK/$NAME/"
+cp "$HERE/_headers" "$HERE/README-web.md" "$WORK/$NAME/"
 copy_docs "$WORK/$NAME"
 (cd "$WORK" && zip -qr9 "$NAME.zip" "$NAME")
 mv -f "$WORK/$NAME.zip" "$DIST/$NAME.zip"

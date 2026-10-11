@@ -6,12 +6,30 @@
     <title>AI Assistant</title>
     <link data-trunk rel="rust" data-wasm-opt="z" />
     <style>
-      html, body { margin: 0; height: 100%; overflow: hidden; background: #f1f1f3; }
-      canvas { width: 100%; height: 100%; display: block; outline: none; }
-      @media (prefers-color-scheme: dark) { html, body { background: #19191c; } }
+      html, body { margin: 0; height: 100%; overflow: hidden; background: #f1f1f3; color: #3c3c43; }
+      /* The app draws over the whole canvas; until it starts, the canvas is transparent and the
+         hint below shows through. No script: the hint simply ends up hidden. */
+      canvas { position: relative; z-index: 1; width: 100%; height: 100%; display: block; outline: none; }
+      #hint { position: absolute; inset: 0; z-index: 0; display: flex; align-items: center; justify-content: center;
+              padding: 24px; box-sizing: border-box; font: 15px/1.6 system-ui, sans-serif; text-align: center; }
+      #hint div { max-width: 36em; }
+      #hint code { padding: 1px 5px; border-radius: 4px; background: rgba(127, 127, 127, 0.18); white-space: nowrap; }
+      @media (prefers-color-scheme: dark) { html, body { background: #19191c; color: #c8c8d0; } }
     </style>
   </head>
   <body>
+    <div id="hint">
+      <div>
+        <p><strong>Loading AI Assistant…</strong></p>
+        <p>
+          If this message does not go away, the page was probably opened as a local file. Browsers do
+          not run WebAssembly from <code>file://</code>: serve this folder over HTTP instead, e.g.
+          <code>python3 -m http.server 8000 --bind 127.0.0.1</code> in this folder, then open
+          <code>http://127.0.0.1:8000</code>. Details: <code>README-web.md</code>.
+        </p>
+        <p>AI Assistant also needs a browser with WebGL2.</p>
+      </div>
+    </div>
     <canvas id="aiassist"></canvas>
   </body>
 </html>
