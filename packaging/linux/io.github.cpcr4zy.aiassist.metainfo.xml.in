@@ -5,14 +5,20 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MIT OR Apache-2.0</project_license>
   <name>AI Assistant</name>
-  <summary>A cross-platform Rust application</summary>
+  <summary>Run your text through AI models with reusable prompts</summary>
   <developer id="io.github.cpcr4zy">
     <name>cpCr4zy</name>
   </developer>
   <description>
     <p>
-      AI Assistant is a native, cross-platform desktop application written in Rust with egui. It runs
-      on Windows, macOS, Linux and FreeBSD, and in the browser.
+      AI Assistant runs your text through any AI model available on OpenRouter, using prompts you
+      define once and reuse: pick a prompt, paste your text, press Send and read the result.
+    </p>
+    <p>
+      Build a small library of prompts for the tasks you repeat, such as fixing grammar, rewriting
+      a paragraph, translating, summarizing or adjusting tone, each backed by whichever model fits
+      it best, including free ones. Requests use your own OpenRouter API key, kept in the system
+      keyring.
     </p>
   </description>
   <launchable type="desktop-id">io.github.cpcr4zy.aiassist.desktop</launchable>
@@ -21,6 +27,7 @@
   <url type="bugtracker">https://github.com/cpCr4zy/AIAssist-rust/issues</url>
   <categories>
     <category>Utility</category>
+    <category>TextTools</category>
   </categories>
   <supports>
     <control>keyboard</control>
@@ -29,6 +36,9 @@
   <provides>
     <binary>aiassist</binary>
   </provides>
+  <requires>
+    <internet>always</internet>
+  </requires>
   <content_rating type="oars-1.1"/>
   <releases>
     <release version="@VERSION@" date="@DATE@"/>

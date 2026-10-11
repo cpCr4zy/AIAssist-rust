@@ -4,6 +4,10 @@ AI Assistant is a cross-platform GUI application in Rust (egui/eframe 0.36): Win
 FreeBSD and the web (wasm32). It was created from a template; the parameters and the template
 commit are in `docs/template-origin.txt`.
 
+It is a port of the Python/PySide6 app AiAssistantLinux (`~/myprojects/AiAssistantLinux`): reusable
+prompts (title, system prompt, OpenRouter model) run over the user's text with their own
+OpenRouter API key. See "Domain" below before changing behaviour.
+
 ## Sources of truth
 
 - `docs/SPEC.md`: stack, dependencies, layout, code rules, application requirements.
@@ -52,10 +56,38 @@ the browser build uses them.
    checks in `release.yml`).
 9. Never weaken lints, `deny.toml` or CI checks to make something pass: fix the cause.
 
+## Domain
+
+- **Tabs.** Main: prompt combo box → "Your text" → Send (also Ctrl+Enter) → "Result" (read-only,
+  selectable) → Copy Result. Settings: API key (Show/Hide, Balance), theme, prompt list
+  (Add/Edit/Remove, double-click edits), Save Settings. Log: this app's log lines.
+- **Saving.** Prompt edits change a working copy that the Main tab already uses; only Save
+  Settings stores it, together with the API key. Theme and the selected prompt are stored at once.
+  Titles are unique, compared trimmed and case-insensitively. System prompts are stored exactly as
+  typed: trailing spaces matter.
+- **Compatibility with the Python app (keep it).** `settings.json` has the same layout
+  (`prompts[{title, system_prompt, model}]`, `theme` = `dark|light|system`, `selected_prompt`), the
+  same folder on Linux (`$XDG_CONFIG_HOME/aiassistant`) and the same keyring entry
+  (service `aiassistant`, user `openrouter_api_key`). A test in `crates/core/src/settings.rs`
+  round-trips a file the Python app wrote, byte for byte. User-facing error texts match too.
+- **Where things live.** `crates/core`: settings model, OpenRouter request builders and response
+  parsers, formatting; pure, no I/O. `crates/ui`: `MainApp`, dialogs, themes (Catppuccin Mocha /
+  Latte / egui's system look), and the platform services behind `Store` and `Http`:
+  `FileStore` + `UreqHttp` on the desktop, `WebStore` (localStorage) + `FetchHttp` in the browser,
+  `testing::{MemoryStore, ScriptedHttp}` in tests.
+- **Requests** never block the UI: `Http::fetch` calls back, the callback sends an `Event` over a
+  channel and requests a repaint. The real system message is sent (`role: system`), not glued to
+  the user's text.
+- **Never log or print the API key.** `HttpRequest`'s `Debug` redacts it.
+- **Live check** (network + a saved key, free model):
+  `cargo test -p aiassist-ui --test live -- --ignored --nocapture`.
+- On KDE Wayland the window icon comes from the installed `.desktop` file (by app id), not from the
+  binary; an uninstalled `cargo run` shows a generic icon.
+
 ## Running and looking at the result
 
 ```bash
-cargo run -p aiassist -- [files…]            # desktop
+cargo run -p aiassist                      # desktop
 AIASSIST_RENDERER=gl cargo run -p aiassist      # force OpenGL
 cd apps/aiassist-web && trunk serve          # web on http://127.0.0.1:8080
 cargo xtask ci                            # every gate

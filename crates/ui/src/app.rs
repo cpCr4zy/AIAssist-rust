@@ -289,7 +289,14 @@ impl MainApp {
 
         let label = ui.label("Result:");
         let mut output = self.output.as_str();
-        let result = egui::TextEdit::multiline(&mut output).hint_text("The result will appear here…");
+        // Read-only but selectable. egui draws read-only fields without a fill, so give it the input
+        // box's look explicitly.
+        let filled = egui::Frame::new()
+            .fill(ui.visuals().text_edit_bg_color())
+            .corner_radius(ui.visuals().widgets.inactive.corner_radius)
+            .stroke(ui.visuals().widgets.inactive.bg_stroke)
+            .inner_margin(4);
+        let result = egui::TextEdit::multiline(&mut output).hint_text("The result will appear here…").frame(filled);
         ui.add_sized([ui.available_width(), box_height], result).labelled_by(label.id);
 
         right_aligned(ui, |ui| {

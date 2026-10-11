@@ -18,8 +18,12 @@ finish-args:
   - --share=ipc
   # GPU access for wgpu (Vulkan) or the OpenGL fallback.
   - --device=dri
-  # Open/Save dialogs go through the file-chooser portal (rfd's xdg-portal backend), so no broad
-  # filesystem access is needed. Add --filesystem=xdg-documents etc. only with a reason.
+  # Requests to the OpenRouter API (https://openrouter.ai/api/v1/).
+  - --share=network
+  # The API key lives in the Secret Service (KWallet, GNOME Keyring); without this the app falls
+  # back to a .api_key file. Settings stay in the sandbox (~/.var/app/<id>/config/aiassistant), so
+  # a Flatpak install does not share them with an unsandboxed one. No filesystem access is needed.
+  - --talk-name=org.freedesktop.secrets
 modules:
   - name: aiassist
     buildsystem: simple
