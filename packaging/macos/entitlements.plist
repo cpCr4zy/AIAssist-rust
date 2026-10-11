@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Hardened-runtime entitlements. Deliberately empty: the app is pure Rust, loads no unsigned
+     code, needs no JIT and is not sandboxed. Add exceptions only with a reason in a comment. -->
+<plist version="1.0">
+<dict>
+</dict>
+</plist>

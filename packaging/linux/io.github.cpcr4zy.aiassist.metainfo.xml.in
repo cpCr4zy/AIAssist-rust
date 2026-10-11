@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- AppStream metadata (software centres, Flathub). package.sh substitutes @VERSION@ and @DATE@. -->
+<component type="desktop-application">
+  <id>io.github.cpcr4zy.aiassist</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT OR Apache-2.0</project_license>
+  <name>AI Assistant</name>
+  <summary>A cross-platform Rust application</summary>
+  <developer id="io.github.cpcr4zy">
+    <name>cpCr4zy</name>
+  </developer>
+  <description>
+    <p>
+      AI Assistant is a native, cross-platform desktop application written in Rust with egui. It runs
+      on Windows, macOS, Linux and FreeBSD, and in the browser.
+    </p>
+  </description>
+  <launchable type="desktop-id">io.github.cpcr4zy.aiassist.desktop</launchable>
+  <icon type="stock">io.github.cpcr4zy.aiassist</icon>
+  <url type="homepage">https://github.com/cpCr4zy/AIAssist-rust</url>
+  <url type="bugtracker">https://github.com/cpCr4zy/AIAssist-rust/issues</url>
+  <categories>
+    <category>Utility</category>
+  </categories>
+  <supports>
+    <control>keyboard</control>
+    <control>pointing</control>
+  </supports>
+  <provides>
+    <binary>aiassist</binary>
+  </provides>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="@VERSION@" date="@DATE@"/>
+  </releases>
+</component>

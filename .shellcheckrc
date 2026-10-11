@@ -1,0 +1,3 @@
+# The packaging scripts source packaging/env.sh by a path relative to themselves.
+external-sources=true
+source-path=SCRIPTDIR

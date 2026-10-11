@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  AI Assistant MSI (WiX Toolset v5, installed with `dotnet tool install`). Built by package.ps1:
+
+    wix build aiassist.wxs -arch x64 -d Version=1.2.3 -d BinDir=... -d IconPath=... -o out.msi
+
+  Per-machine install into Program Files, a Start Menu shortcut, an optional desktop shortcut
+  (INSTALLDESKTOPSHORTCUT=0 on the msiexec command line skips it) and an App Paths entry.
+  new-project.sh generates the UpgradeCode and component GUIDs once per project: never change the
+  UpgradeCode afterwards, or upgrades install side by side.
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+      Name="AI Assistant"
+      Manufacturer="cpCr4zy"
+      Version="$(var.Version)"
+      UpgradeCode="893E31A3-169B-4FB6-A5D0-E0EEE228169A"
+      Scope="perMachine"
+      Compressed="yes"
+      Language="1033">
+    <SummaryInformation Description="AI Assistant" Manufacturer="cpCr4zy" />
+    <!-- Same-version upgrades let successive pre-releases of one X.Y.Z replace each other
+         (MSI versions are numeric, so 1.2.3-rc.1 and 1.2.3-rc.2 are both 1.2.3). -->
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of AI Assistant is already installed." />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <!-- Windows Installer needs an Icon id ending in .ico or .exe, or Add/Remove Programs shows a blank icon. -->
+    <Icon Id="AppIcon.ico" SourceFile="$(var.IconPath)" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon.ico" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/cpCr4zy/AIAssist-rust" />
+    <Property Id="INSTALLDESKTOPSHORTCUT" Value="1" Secure="yes" />
+
+    <StandardDirectory Id="ProgramFiles6432Folder">
+      <Directory Id="INSTALLFOLDER" Name="AI Assistant" />
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder" />
+    <StandardDirectory Id="DesktopFolder" />
+
+    <Feature Id="Main" Title="AI Assistant" Level="1">
+      <ComponentGroupRef Id="AppFiles" />
+    </Feature>
+  </Package>
+
+  <Fragment>
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <Component Id="AppExe" Guid="C9149EBF-3774-4896-B9A3-BBEE3A5D0941">
+        <File Id="AppExeFile" Source="$(var.BinDir)\aiassist.exe" KeyPath="yes" />
+        <RegistryValue Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\aiassist.exe" Value="[#AppExeFile]" Type="string" />
+        <!-- File associations: add a ProgID, OpenWithProgids, Capabilities and RegisteredApplications
+             here (see pdfcraft.wxs) so the app is offered under "Open with" without taking over. -->
+      </Component>
+
+      <!-- Plain (not advertised) shortcuts, each with an HKLM key path so uninstall removes it. -->
+      <Component Id="AppStartMenuShortcut" Directory="ProgramMenuFolder" Guid="7924CA78-68D0-4748-BE3A-98CFABAB222D">
+        <Shortcut Id="StartMenuShortcut" Name="AI Assistant" Target="[#AppExeFile]" WorkingDirectory="INSTALLFOLDER" Icon="AppIcon.ico" IconIndex="0" />
+        <RegistryValue Root="HKLM" Key="Software\AI Assistant\Shortcuts" Name="StartMenu" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+      <Component Id="AppDesktopShortcut" Directory="DesktopFolder" Guid="B19AAC5F-5F50-487E-8DF8-033C5B764859" Condition="INSTALLDESKTOPSHORTCUT = 1">
+        <Shortcut Id="DesktopShortcut" Name="AI Assistant" Target="[#AppExeFile]" WorkingDirectory="INSTALLFOLDER" Icon="AppIcon.ico" IconIndex="0" />
+        <RegistryValue Root="HKLM" Key="Software\AI Assistant\Shortcuts" Name="Desktop" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+
+      <Component Id="AppMitLicense">
+        <File Id="AppMitLicenseFile" Source="$(var.BinDir)\LICENSE-MIT" KeyPath="yes" />
+      </Component>
+      <Component Id="AppApacheLicense">
+        <File Id="AppApacheLicenseFile" Source="$(var.BinDir)\LICENSE-APACHE" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

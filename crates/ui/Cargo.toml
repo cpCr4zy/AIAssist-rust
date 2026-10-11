@@ -1,0 +1,27 @@
+[package]
+name = "aiassist-ui"
+description = "The egui shell of AI Assistant, shared by the desktop and web apps"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+aiassist-core = { workspace = true }
+egui = { workspace = true }
+egui_extras = { workspace = true }
+# glow builds everywhere (desktop and WebGL2); the desktop app adds wgpu, wayland and x11.
+eframe = { workspace = true, features = ["default_fonts", "glow", "accesskit", "persistence"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+log = { workspace = true }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+# Native Open/Save dialogs (GTK or the xdg portal on Linux, Cocoa on macOS, Win32 on Windows).
+rfd = { workspace = true }
+
+[dev-dependencies]
+egui_kittest = { workspace = true, features = ["eframe"] }

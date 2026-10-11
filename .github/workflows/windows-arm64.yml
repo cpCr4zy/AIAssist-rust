@@ -1,0 +1,105 @@
+# Windows on ARM: package the ARM64 release the way release.yml does (cross-compiled on an x64
+# runner, unsigned here), then install that MSI on a Windows 11 ARM64 runner and run it, and run
+# the test suite natively on ARM64.
+name: Windows ARM64
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - Cargo.toml
+      - Cargo.lock
+      - "**/Cargo.toml"
+      - "**/build.rs"
+      - .github/workflows/windows-arm64.yml
+      - packaging/windows/**
+  schedule:
+    - cron: "41 4 * * 1" # weekly, so drift in the runner images shows up
+  workflow_dispatch:
+
+concurrency:
+  group: windows-arm64-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+  RUST_BACKTRACE: 1
+
+jobs:
+  package:
+    name: package (cross-compiled on x64)
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-pc-windows-msvc
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: windows-arm64-package
+      - name: Install WiX
+        shell: pwsh
+        run: dotnet tool install --global wix --version 5.0.2
+      - name: Build and package (unsigned)
+        shell: pwsh
+        env:
+          DIST: ${{ github.workspace }}\dist\arm64
+        run: ./packaging/windows/package.ps1 -Arch arm64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aiassist-windows-arm64
+          path: dist/arm64/*
+          if-no-files-found: error
+          retention-days: 7
+
+  install:
+    name: install and run on ARM64
+    needs: package
+    runs-on: windows-11-arm
+    timeout-minutes: 30
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: aiassist-windows-arm64
+          path: dist
+      - name: Install the MSI, check it, run it, uninstall it
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $msi = (Get-ChildItem dist/*.msi | Select-Object -First 1).FullName
+          $p = Start-Process msiexec.exe -ArgumentList '/i', "`"$msi`"", '/qn', '/l*v', 'install.log' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { Get-Content install.log -Tail 60; throw "msiexec /i exited $($p.ExitCode)" }
+          $shortcut = Join-Path ([Environment]::GetFolderPath('CommonPrograms')) 'AI Assistant.lnk'
+          if (-not (Test-Path -LiteralPath $shortcut)) { throw "installer did not create $shortcut" }
+          $exe = Join-Path $env:ProgramFiles 'AI Assistant\aiassist.exe'
+          if (-not (Test-Path $exe)) { throw "$exe not installed" }
+          $bytes = [System.IO.File]::ReadAllBytes($exe)
+          $machine = [BitConverter]::ToUInt16($bytes, [BitConverter]::ToInt32($bytes, 0x3C) + 4)
+          if ($machine -ne 0xAA64) { throw "aiassist.exe is for machine 0x$('{0:X}' -f $machine), not ARM64" }
+          $run = Start-Process $exe -ArgumentList '--version' -Wait -PassThru
+          if ($run.ExitCode -ne 0) { throw "aiassist.exe --version exited $($run.ExitCode)" }
+          Write-Output 'ok installed and ran on ARM64'
+          $p = Start-Process msiexec.exe -ArgumentList '/x', "`"$msi`"", '/qn' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "msiexec /x exited $($p.ExitCode)" }
+          if (Test-Path $exe) { throw 'uninstall left aiassist.exe behind' }
+          if (Test-Path -LiteralPath $shortcut) { throw "uninstall left $shortcut behind" }
+          Write-Output 'ok uninstalled'
+
+  test:
+    name: test (native ARM64)
+    runs-on: windows-11-arm
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: windows-arm64-test
+      - name: Test
+        run: cargo test --workspace --locked

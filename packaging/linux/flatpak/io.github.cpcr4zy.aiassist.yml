@@ -1,0 +1,33 @@
+# Flatpak manifest for the single-file bundle attached to every GitHub release
+# (aiassist-<version>-linux-<arch>.flatpak), built by packaging/linux/flatpak-bundle.sh.
+#
+# It repackages the release's own Linux tarball instead of compiling Rust inside flatpak-builder:
+# no network and no vendored crate sources, seconds instead of minutes, and the same binary as the
+# AppImage/deb/rpm. For Flathub, write a from-source manifest with the rust-stable SDK extension
+# and flatpak-cargo-generator, keeping runtime-version and finish-args identical.
+id: io.github.cpcr4zy.aiassist
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+command: aiassist
+finish-args:
+  # Display: Wayland first; X11 only when no Wayland compositor is running.
+  - --socket=wayland
+  - --socket=fallback-x11
+  # X11 shared memory (MIT-SHM).
+  - --share=ipc
+  # GPU access for wgpu (Vulkan) or the OpenGL fallback.
+  - --device=dri
+  # Open/Save dialogs go through the file-chooser portal (rfd's xdg-portal backend), so no broad
+  # filesystem access is needed. Add --filesystem=xdg-documents etc. only with a reason.
+modules:
+  - name: aiassist
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 bin/aiassist /app/bin/aiassist
+      - install -Dm644 share/applications/io.github.cpcr4zy.aiassist.desktop /app/share/applications/io.github.cpcr4zy.aiassist.desktop
+      - install -Dm644 share/metainfo/io.github.cpcr4zy.aiassist.metainfo.xml /app/share/metainfo/io.github.cpcr4zy.aiassist.metainfo.xml
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/aiassist /app/share/doc/
+    sources:
+      - type: dir
+        path: stage

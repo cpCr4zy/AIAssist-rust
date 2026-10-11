@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=AI Assistant
+Comment=A cross-platform Rust application
+Exec=aiassist %U
+TryExec=aiassist
+Icon=io.github.cpcr4zy.aiassist
+Terminal=false
+StartupNotify=true
+StartupWMClass=io.github.cpcr4zy.aiassist
+Categories=Utility;

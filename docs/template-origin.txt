@@ -1,0 +1,5 @@
+template: /home/pavel/myprojects/RustGuiSpec
+source: https://github.com/cpCr4zy/RustGuiSpec.git
+commit: 9999663243f8728f2f4012c99ba1e487538091b9
+created: 2026-10-11
+crate=aiassist name=AI Assistant app_id=io.github.cpcr4zy.aiassist repo=cpCr4zy/AIAssist-rust vendor=cpCr4zy

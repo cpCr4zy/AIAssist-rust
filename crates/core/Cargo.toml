@@ -1,0 +1,18 @@
+[package]
+name = "aiassist-core"
+description = "AI Assistant engine: no GUI dependencies, builds for every target including wasm32"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+thiserror = { workspace = true }
+serde = { workspace = true }
+log = { workspace = true }
+
+[dev-dependencies]
+proptest = { workspace = true }

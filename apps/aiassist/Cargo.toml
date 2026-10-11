@@ -1,0 +1,24 @@
+[package]
+name = "aiassist"
+description = "AI Assistant desktop app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+aiassist-ui = { workspace = true }
+# wgpu draws (DX12 / Metal / Vulkan); OpenGL (glow) is the fallback when wgpu can't start on an
+# old or unusual GPU or driver, and can be chosen with AIASSIST_RENDERER=gl. One Linux binary runs
+# under both Wayland and X11.
+eframe = { workspace = true, features = ["default_fonts", "wgpu", "glow", "accesskit", "wayland", "x11", "persistence", "links"] }
+egui = { workspace = true }
+log = { workspace = true }
+env_logger = { version = "0.11", default-features = false, features = ["auto-color", "humantime"] }
+
+[build-dependencies]
+# Icon + VERSIONINFO + DPI manifest for aiassist.exe; build.rs only uses it when targeting Windows.
+winresource = "0.1"

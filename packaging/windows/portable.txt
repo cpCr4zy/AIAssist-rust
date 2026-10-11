@@ -1,0 +1,2 @@
+This file switches AI Assistant to portable mode: settings and logs are kept in aiassist-data\ next to
+aiassist.exe instead of %APPDATA%. Delete it to use the normal per-user folders.

@@ -1,0 +1,9 @@
+# Every checkout is byte-identical to the repository: no line-ending conversion, ever
+# (Windows' core.autocrlf would otherwise rewrite scripts, fixtures and hashed assets).
+* -text
+
+*.png binary
+*.ico binary
+*.icns binary
+*.ttf binary
+*.otf binary
