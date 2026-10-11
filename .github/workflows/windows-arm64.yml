@@ -51,7 +51,7 @@ jobs:
         env:
           DIST: ${{ github.workspace }}\dist\arm64
         run: ./packaging/windows/package.ps1 -Arch arm64
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: aiassist-windows-arm64
           path: dist/arm64/*
