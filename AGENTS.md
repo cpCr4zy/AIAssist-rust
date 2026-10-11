@@ -85,6 +85,8 @@ the browser build uses them.
 - **Never log or print the API key.** `HttpRequest`'s `Debug` redacts it.
 - **Live check** (network + a saved key, free model):
   `cargo test -p aiassist-ui --test live -- --ignored --nocapture`.
+- **README screenshot** (`docs/screenshot.png`) is rendered from demo data by an ignored test;
+  re-render it after visible UI changes: `cargo test -p aiassist-ui --test screenshot -- --ignored`.
 - On KDE Wayland the window icon comes from the installed `.desktop` file (by app id), not from the
   binary; an uninstalled `cargo run` shows a generic icon.
 
