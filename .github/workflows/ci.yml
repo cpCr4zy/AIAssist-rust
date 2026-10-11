@@ -1,8 +1,8 @@
 name: CI
 
+# Quick gates on every pull request (required by the `main` ruleset). Nothing runs on pushes to
+# main: commits arrive there only through pull requests that already passed.
 on:
-  push:
-    branches: [main]
   pull_request:
   workflow_dispatch:
 

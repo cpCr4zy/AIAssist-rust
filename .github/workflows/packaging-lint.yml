@@ -2,10 +2,8 @@
 # packaging shell/PowerShell scripts, and the Linux desktop/AppStream metadata.
 name: Packaging lint
 
+# Pull requests that touch packaging; release.yml checks the built packages itself.
 on:
-  push:
-    branches: [main, release]
-    paths: [".github/workflows/**", "packaging/**", "assets/app-icon/**"]
   pull_request:
     paths: [".github/workflows/**", "packaging/**", "assets/app-icon/**"]
   workflow_dispatch:

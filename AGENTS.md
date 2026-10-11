@@ -78,6 +78,10 @@ the browser build uses them.
 - **Requests** never block the UI: `Http::fetch` calls back, the callback sends an `Event` over a
   channel and requests a repaint. The real system message is sent (`role: system`), not glued to
   the user's text.
+- **CI triggers differ from `docs/CICD.md` (the user's decision):** nothing runs on pushes to
+  `main`. Pull requests run `ci.yml` (required by the `main` ruleset) and `packaging-lint.yml`
+  (packaging changes); `freebsd.yml` and `windows-arm64.yml` run only on pushes to `release`
+  (with `release.yml`) and on demand; no scheduled runs.
 - **Never log or print the API key.** `HttpRequest`'s `Debug` redacts it.
 - **Live check** (network + a saved key, free model):
   `cargo test -p aiassist-ui --test live -- --ignored --nocapture`.

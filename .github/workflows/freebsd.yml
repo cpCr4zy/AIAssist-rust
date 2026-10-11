@@ -2,16 +2,10 @@
 # (GitHub has no FreeBSD runners). GPU tests must skip themselves when the VM has no adapter.
 name: FreeBSD
 
+# Slow (a VM): runs only for a release, beside release.yml, and on demand.
 on:
   push:
-    branches: [main]
-  pull_request:
-    paths:
-      - Cargo.toml
-      - Cargo.lock
-      - "**/Cargo.toml"
-      - .github/workflows/freebsd.yml
-      - packaging/freebsd/**
+    branches: [release]
   workflow_dispatch:
 
 concurrency:
