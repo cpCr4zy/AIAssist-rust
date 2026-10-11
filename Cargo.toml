@@ -22,13 +22,27 @@ thiserror = "2"
 serde = { version = "1", features = ["derive", "rc"] }
 serde_json = "1"
 log = "0.4"
+# Local wall-clock time for log lines; `wasmbind` reads it from the browser.
+chrono = { version = "0.4", default-features = false, features = ["clock", "wasmbind"] }
+
+# network (desktop): HTTPS with the OS's root certificates, no webpki-roots (SPEC.md §4.3)
+ureq = { version = "3", default-features = false, features = ["rustls-no-provider", "_ring"] }
+rustls-native-certs = "0.8"
+
+# secrets (desktop): Windows Credential Manager, macOS Keychain, Secret Service on Linux/FreeBSD
+keyring = "4"
+zbus-secret-service-keyring-store = "1"
+
+# web (wasm32)
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+web-sys = "0.3"
 
 # ui (each binary picks its eframe features: SPEC.md §4.2)
 egui = "0.36"
-egui_extras = { version = "0.36", default-features = false, features = ["svg"] }
+egui_extras = { version = "0.36", default-features = false }
 eframe = { version = "0.36", default-features = false }
 egui_kittest = "0.36"
-rfd = "0.17"
 
 # testing
 proptest = "1"

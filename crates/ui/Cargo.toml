@@ -15,13 +15,24 @@ egui = { workspace = true }
 egui_extras = { workspace = true }
 # glow builds everywhere (desktop and WebGL2); the desktop app adds wgpu, wayland and x11.
 eframe = { workspace = true, features = ["default_fonts", "glow", "accesskit", "persistence"] }
-serde = { workspace = true }
 serde_json = { workspace = true }
 log = { workspace = true }
+chrono = { workspace = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-# Native Open/Save dialogs (GTK or the xdg portal on Linux, Cocoa on macOS, Win32 on Windows).
-rfd = { workspace = true }
+ureq = { workspace = true }
+rustls-native-certs = { workspace = true }
+keyring = { workspace = true }
+
+# keyring talks to the Secret Service here; this only switches on the encrypted D-Bus session, so
+# the API key never crosses the bus in plain text.
+[target.'cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))'.dependencies]
+zbus-secret-service-keyring-store = { workspace = true, features = ["crypto-rust"] }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+web-sys = { workspace = true, features = ["Window", "Storage", "Headers", "Request", "RequestInit", "Response"] }
 
 [dev-dependencies]
 egui_kittest = { workspace = true, features = ["eframe"] }
