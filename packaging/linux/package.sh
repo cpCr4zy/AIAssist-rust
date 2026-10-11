@@ -38,7 +38,7 @@ case "$ARCH" in
   aarch64 | arm64) ARCH=aarch64; DEB_ARCH=arm64 ;;
   *) echo "unsupported architecture $ARCH" >&2; exit 2 ;;
 esac
-export AIASSIST_MAINTAINER="${AIASSIST_MAINTAINER:-AI Assistant maintainers <maintainers@example.com>}"
+export AIASSIST_MAINTAINER="${AIASSIST_MAINTAINER:-cpCr4zy <cpCr4zy@users.noreply.github.com>}"
 BASENAME="aiassist-$VERSION-linux-$ARCH"
 
 echo "==> AI Assistant $VERSION for Linux $ARCH ($FORMATS)"
