@@ -39,10 +39,10 @@ wasm-bindgen-futures = "0.4"
 web-sys = "0.3"
 
 # ui (each binary picks its eframe features: SPEC.md §4.2)
-egui = "0.36"
-egui_extras = { version = "0.36", default-features = false }
-eframe = { version = "0.36", default-features = false }
-egui_kittest = "0.36"
+egui = "0.37"
+egui_extras = { version = "0.37", default-features = false }
+eframe = { version = "0.37", default-features = false }
+egui_kittest = "0.37"
 
 # testing
 proptest = "1"
